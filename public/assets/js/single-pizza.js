@@ -8,6 +8,23 @@ const $commentSection = document.querySelector('#comment-section');
 const $newCommentForm = document.querySelector('#new-comment-form');
 
 let pizzaId;
+function getPizza() {
+  const searchParams = new URLSearchParams(document.location.search.substring(1))
+  const pizzaId = searchParams.get('id')
+
+  fetch(`/api/pizzas/${pizzaId}`)
+  .then(res => {
+    if(!res.ok){
+      throw new Error({ message: 'Something went wrong!'})
+    }
+    return res.json();
+  }).then(printPizza)
+  .catch(err => {
+    console.log(err)
+    alert('Cannot find the pizza you are looking for. Redirecting.');
+    window.history.back();
+  })
+}
 
 function printPizza(pizzaData) {
   console.log(pizzaData);
@@ -87,6 +104,28 @@ function handleNewCommentSubmit(event) {
   }
 
   const formData = { commentBody, writtenBy };
+
+  fetch(`/api/comments/${pizzaId}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(res => {
+    if(!res.ok){
+      throw new Error('Something went wrong!')
+    }
+    res.json();
+  })
+  .then(commentRes => {
+    console.log(commentRes)
+    location.reload();
+  })
+  .catch(err => {
+    console.log(err)
+  })
 }
 
 function handleNewReplySubmit(event) {
@@ -106,6 +145,7 @@ function handleNewReplySubmit(event) {
   }
 
   const formData = { writtenBy, replyBody };
+
 }
 
 $backBtn.addEventListener('click', function() {
@@ -114,3 +154,5 @@ $backBtn.addEventListener('click', function() {
 
 $newCommentForm.addEventListener('submit', handleNewCommentSubmit);
 $commentSection.addEventListener('submit', handleNewReplySubmit);
+
+getPizza();
