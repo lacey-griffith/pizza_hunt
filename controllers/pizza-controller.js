@@ -44,7 +44,7 @@ const pizzaController = {
     },
 //method for updating a pizza
     updatePizza({params, body}, res){
-        Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true })
+        Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
         .then(pizzaData => {
             if(!pizzaData){
                 res.status(404).json({message: 'No pizza found!'})
@@ -52,7 +52,7 @@ const pizzaController = {
             }
             res.json(pizzaData)
         })
-        .catch(err => res.status(400).json(err))
+        .catch(err => res.status(400).json({message: `There was an err:${err}`}))
     },
     deletePizza({ params }, res){
         Pizza.findOneAndDelete({ _id: params.id })
