@@ -3,6 +3,7 @@ const { addComment, removeComment, addReply, removeReply} = require('../../contr
 
 // add comment to a pizza
 router
+// api/comments/pizzaID/
 .route('/:pizzaId')
 .post(addComment);
 
